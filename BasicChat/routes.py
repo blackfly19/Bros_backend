@@ -10,7 +10,8 @@ global_chat_users = {}
 
 def generate_random_name():
 
-    colors = ['Yellow','Green','Blue','Pink','Black','White','Purple','Red','Orange','Brown']
+    colors = ['Scarlet','Green','Blue','Pink','Black','Cyan','Purple','Red','Orange','Brown']
+    #colors = ['#ff2400','#ff2400','#ff2400','#ff2400','#ff2400','#ff2400','#ff2400','#ff2400','#ff2400','#ff2400']
     adjectives = ['Cool','Awesome','Dangerous','Cunning','Adventurous','Fearless','Brave','Charming','Intelligent','Amazing']
     animal = ['Tiger','Penguin','Eagle','Bear','Panda','Wolf','Seal','Shark','Koala','Rabbit']
 
@@ -42,7 +43,7 @@ def connect():
 @socketio.on('identifier')
 def getDeviceId(values):
     print(values)
-    user = User(deviceId=values[0],name=values[1],username=global_chat_users[request.sid])
+    user = User(deviceId=values[0],name=values[1],username=global_chat_users[request.sid][0])
     db.session.add(user)
     db.session.commit()
 
