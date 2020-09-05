@@ -9,7 +9,7 @@ global_chat_users = {}
 
 def generate_random_name():
 
-    colors = ['Green','Blue','Pink','Black','Cyan','Purple','Red','Orange','Brown']
+    colors = ['Green','Blue','Pink','Black','Cyan','Purple','Red','Orange','Brown','Yellow']
     #colors = ['#ff2400','#ff2400','#ff2400','#ff2400','#ff2400','#ff2400','#ff2400','#ff2400','#ff2400','#ff2400']
     adjectives = ['Cool','Awesome','Dangerous','Cunning','Adventurous','Fearless','Brave','Charming','Intelligent','Amazing']
     animal = ['Tiger','Penguin','Eagle','Bear','Panda','Wolf','Seal','Shark','Koala','Rabbit']
