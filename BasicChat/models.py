@@ -12,3 +12,8 @@ class User(db.Model):
     deviceId = db.Column('deviceId',db.String(100))
     name = db.Column('name',db.String(150))
     username = db.Column('username',db.String(64))
+
+#User model - id,emailid-unique,phone no.-unique,name-extract from email,token-generated(secrets,primary_key), remove username
+#Features - token-generated(secrets,primary_key),last_seen,
+#Groups - identifier,GroupName,Latitude,Longitude,Members
+#Type,identifier,from,to
