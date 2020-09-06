@@ -1,53 +1,58 @@
 from BasicChat import socketio,db
-from BasicChat.models import History,User
+from BasicChat.models import History
 from flask import request
 from flask_socketio import send,emit
 import json
-import numpy as np
+import random
 
 global_chat_users = {}
+colors = {
+    'Ali': 'blue',
+    'Ankit':'red',
+    'Sarvesh':'green',
+    'Abhishek':'yellow',
+    'Abhigyan': 'orange'
+}
 
-def generate_random_name():
+"""def generate_color():
 
-    colors = ['Green','Blue','Pink','Black','Cyan','Purple','Red','Orange','Brown','Yellow']
-    #colors = ['#ff2400','#ff2400','#ff2400','#ff2400','#ff2400','#ff2400','#ff2400','#ff2400','#ff2400','#ff2400']
-    adjectives = ['Cool','Awesome','Dangerous','Cunning','Adventurous','Fearless','Brave','Charming','Intelligent','Amazing']
-    animal = ['Tiger','Penguin','Eagle','Bear','Panda','Wolf','Seal','Shark','Koala','Rabbit']
-
-    name_rand = np.random.randint(10,size=3)
-    return adjectives[name_rand[1]] +colors[name_rand[0]] +animal[name_rand[2]],colors[name_rand[0]]
+    colors = ['green','blue','pink','black','cyan','purple','red','orange','brown','yellow']
+    rnd = random.randint(0,9)
+    return colors[rnd]"""
 
 
 @socketio.on('message')
 def handleMessage(data):
 
-        print('Message: ' + data[0] + ' '+data[1] + ' '+data[2])
+        #print('Message: ' + data[0] + ' '+data[1] + ' '+data[2])
         js = {}
-        message = History(message=data[1])
+        message = History(username=global_chat_users[request.sid],message=data[1],time=data[2])
         db.session.add(message)
         db.session.commit()
         last_message_id = History.query.order_by(History.id.desc()).first().id
-        sender = global_chat_users[request.sid]
-        js = {"id": last_message_id,"message":data[1],"color":sender[1].lower(),"username":sender[0],"time":data[2]}
+        color = colors[global_chat_users[request.sid]]
+        js = {"id": last_message_id,"message":data[1],"color":color,"username":global_chat_users[request.sid],"time":data[2]}
         send_json = json.dumps(js)
-        print(send_json)
+        #print(send_json)
         send(send_json,broadcast=True,include_self=False)
 
 @socketio.on('connect')
 def connect():
-    name = generate_random_name()
-    print('Connected',name[0])
-    global_chat_users[request.sid] = name
+    print('Connected',request.sid)
+
 
 @socketio.on('identifier')
 def getDeviceId(values):
-    print(values)
-    user = User(deviceId=values[0],name=values[1],username=global_chat_users[request.sid][0])
-    db.session.add(user)
-    db.session.commit()
+    #print(values)
+    global_chat_users[request.sid] = values[1]
+    messages = History.query.all()
+    if messages is not None:
+        for m in messages:
+            js = {"id":m.id,"message":m.message,"color":colors[m.username],"username":m.username,"time":m.time}
+            send_json = json.dumps(js)
+            send(send_json,include_self=True)
 
 @socketio.on('disconnect')
 def disconnect():
-    disconnected_device = global_chat_users[request.sid]
-    print('Disconnected',disconnected_device)
+    print('Disconnected',request.sid)
 
