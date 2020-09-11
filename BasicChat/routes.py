@@ -30,12 +30,12 @@ def connect():
 def getDeviceId(values):
     #print(values)
     global_chat_users[request.sid] = values[1]
-    messages = History.query.all()
+    """messages = History.query.all()
     if messages is not None:
         for m in messages:
             js = {"id":m.id,"message":m.message,"color":'black',"username":m.username,"time":m.time}
             send_json = json.dumps(js)
-            send(send_json,include_self=True)
+            send(send_json,include_self=True)"""
 
 @socketio.on('disconnect')
 def disconnect():
