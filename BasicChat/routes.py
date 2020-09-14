@@ -10,7 +10,7 @@ global_chat_users = {}
 @socketio.on('message')
 def handleMessage(data):
 
-        #print('Message: ' + data[0] + ' '+data[1] + ' '+data[2])
+        print('Message: ' + data[0] + ' '+data[1] + ' '+data[2])
         js = {}
         message = History(username=global_chat_users[request.sid],message=data[1],time=data[2])
         db.session.add(message)
@@ -18,7 +18,7 @@ def handleMessage(data):
         last_message_id = History.query.order_by(History.id.desc()).first().id
         js = {"id": last_message_id,"message":data[1],"color":'black',"username":global_chat_users[request.sid],"time":data[2]}
         send_json = json.dumps(js)
-        #print(send_json)
+        print(send_json)
         send(send_json,broadcast=True,include_self=False)
 
 @socketio.on('connect')
@@ -28,7 +28,7 @@ def connect():
 
 @socketio.on('identifier')
 def getDeviceId(values):
-    #print(values)
+    print(values)
     global_chat_users[request.sid] = values[1]
     """messages = History.query.all()
     if messages is not None:
@@ -36,6 +36,18 @@ def getDeviceId(values):
             js = {"id":m.id,"message":m.message,"color":'black',"username":m.username,"time":m.time}
             send_json = json.dumps(js)
             send(send_json,include_self=True)"""
+
+@socketio.on('rowNum')
+def unread_messages(last_row_id):
+    print("Hi")
+    m = History.query.all()
+    runs = last_row_id
+    num_messages = len(m)
+    while runs < num_messages:
+        js = {"id":m[runs].id,"message":m[runs].message,"color":'black',"username":m[runs].username,"time":m[runs].time}
+        send_json = json.dumps(js)
+        send(send_json,include_self=True)
+        runs = runs + 1
 
 @socketio.on('disconnect')
 def disconnect():
