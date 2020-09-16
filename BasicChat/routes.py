@@ -42,7 +42,7 @@ def existingUser(Id):
 @socketio.on('rowNum')
 def unread_messages(last_row_id):
     print("Hi")
-    m = History.query.filter_by(History.id > last_row_id).all()
+    m = History.query.filter(History.id > last_row_id).all()
     messages_schema = MessageSchema(many=True)
     messages = messages_schema.dump(m)
     emit('json',messages)

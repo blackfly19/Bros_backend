@@ -1,4 +1,3 @@
 # XenoBackend
 
-Whenever creating a new feature, create a new branch with feature name and then upload the code on that branch. Then create a pul request.
-I'll merge it.
+This is the backend for the XenoApp. A chat application deployed on heroku which uses websockets.
