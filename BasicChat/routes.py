@@ -1,5 +1,5 @@
 from BasicChat import socketio,db
-from BasicChat.models import History
+from BasicChat.models import History,User,MessageSchema
 from flask import request
 from flask_socketio import send,emit
 import json
@@ -26,28 +26,33 @@ def connect():
     print('Connected',request.sid)
 
 
-@socketio.on('identifier')
-def getDeviceId(values):
+@socketio.on('newUser')
+def newUser(values):
     print(values)
+    user = User(uniqueId = values[0],username = values[1])
+    db.session.add(user)
+    db.session.commit()
     global_chat_users[request.sid] = values[1]
-    """messages = History.query.all()
-    if messages is not None:
-        for m in messages:
-            js = {"id":m.id,"message":m.message,"color":'black',"username":m.username,"time":m.time}
-            send_json = json.dumps(js)
-            send(send_json,include_self=True)"""
 
+@socketio.on('user')
+def existingUser(Id):
+    user = User.query.filter_by(uniqueId = Id).first()
+    global_chat_users[request.sid] = user.username
+    
 @socketio.on('rowNum')
 def unread_messages(last_row_id):
     print("Hi")
-    m = History.query.all()
-    runs = last_row_id
+    m = History.query.filter(History.id > last_row_id).all()
+    messages_schema = MessageSchema(many=True)
+    messages = messages_schema.dump(m)
+    emit('json',messages)
+    """runs = last_row_id
     num_messages = len(m)
     while runs < num_messages:
         js = {"id":m[runs].id,"message":m[runs].message,"color":'black',"username":m[runs].username,"time":m[runs].time}
         send_json = json.dumps(js)
         send(send_json,include_self=True)
-        runs = runs + 1
+        runs = runs + 1"""
 
 @socketio.on('disconnect')
 def disconnect():

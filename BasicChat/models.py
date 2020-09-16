@@ -1,4 +1,4 @@
-from BasicChat import db
+from BasicChat import db,ma
 from datetime import datetime as dt
 
 
@@ -8,11 +8,14 @@ class History(db.Model):
     message = db.Column('message',db.String(500))
     time = db.Column('Timestamp',db.String(20))
 
-"""class User(db.Model):
+class User(db.Model):
     id = db.Column('id',db.Integer,primary_key=True)
-    deviceId = db.Column('deviceId',db.String(100))
-    name = db.Column('name',db.String(150))
-    username = db.Column('username',db.String(64))"""
+    uniqueId = db.Column('UniqueId',db.String(100))
+    username = db.Column('username',db.String(100))
+
+class MessageSchema(ma.Schema):
+    class Meta:
+        fields = ['id','username','message','time']
 
 
 #User model - id,emailid-unique,phone no.-unique,name-extract from email,token-generated(secrets,primary_key), remove username
