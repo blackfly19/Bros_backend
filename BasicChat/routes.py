@@ -29,10 +29,14 @@ def connect():
 @socketio.on('newUser')
 def newUser(values):
     print(values)
-    user = User(uniqueId = values[0],username = values[1])
-    db.session.add(user)
-    db.session.commit()
-    global_chat_users[request.sid] = values[1]
+    user_exists = User.query.filter_by(uniqueId = values[0]).first()
+    if user_exists is None:
+        user = User(uniqueId = values[0],username = values[1])
+        db.session.add(user)
+        db.session.commit()
+        global_chat_users[request.sid] = user.username
+    else:
+        global_chat_users[request.sid] = user_exists.username
 
 @socketio.on('user')
 def existingUser(Id):
