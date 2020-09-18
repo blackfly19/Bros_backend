@@ -56,6 +56,7 @@ def unread_messages(last_row_id):
 
 @socketio.on('disconnect')
 def disconnect():
-    del global_chat_users[request.sid]
+    if request.sid in global_chat_users:
+        del global_chat_users[request.sid]
     print('Disconnected',request.sid)
 
