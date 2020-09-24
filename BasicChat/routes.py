@@ -26,7 +26,7 @@ def handleMessage(data):
         send(send_json,broadcast=True,include_self=False)
         if offline_users is not None:
             for user in offline_users:
-                send_push_message(user.uniqueId,'Bros',user.username + data[1])
+                send_push_message(user.uniqueId,'Bros',online_users[request.sid] +': ' + data[1])
 
 @socketio.on('connect')
 def connect():
