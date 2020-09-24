@@ -17,8 +17,3 @@ class MessageSchema(ma.Schema):
     class Meta:
         fields = ['id','username','message','time']
 
-
-#User model - id,emailid-unique,phone no.-unique,name-extract from email,token-generated(secrets,primary_key), remove username
-#Features - token-generated(secrets,primary_key),last_seen,
-#Groups - identifier,GroupName,Latitude,Longitude,Members
-#Type,identifier,from,to
