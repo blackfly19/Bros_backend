@@ -33,6 +33,7 @@ def connect():
     print('Connected',request.sid)
     emit('status',1)
 
+
 @socketio.on('newUser')
 def newUser(values):
     print(values)
