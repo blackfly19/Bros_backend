@@ -14,7 +14,7 @@ online_usernames = []
 def handleMessage(data):
 
         print('Message: ' + data[0] + ' '+data[1] + ' '+data[2])
-        offline_users = User.query.filter(User.username.notin_(ls)).all()
+        offline_users = User.query.filter(User.username.notin_(online_users)).all()
         js = {}
         message = History(username=online_users[request.sid],message=data[1],time=data[2])
         db.session.add(message)
@@ -24,11 +24,14 @@ def handleMessage(data):
         send_json = json.dumps(js)
         print(send_json)
         send(send_json,broadcast=True,include_self=False)
+        if offline_users is not None:
+            for user in offline_users:
+                send_push_message(user.uniqueId,'Bros',data[1])
 
 @socketio.on('connect')
 def connect():
     print('Connected',request.sid)
-
+    emit('status',1)
 
 @socketio.on('newUser')
 def newUser(values):
@@ -68,6 +71,7 @@ def disconnect():
 
 #utility functions
 
+#for sending notifications
 def send_push_message(token,title, message, extra=None):
     try:
         response = PushClient().publish(
