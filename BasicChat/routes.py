@@ -14,26 +14,32 @@ online_usernames = []
 def handleMessage(data):
 
         print('Message: ' + data[0] + ' '+data[1] + ' '+data[2])
-        offline_users = User.query.filter(User.username.notin_(online_users)).all()
+
         js = {}
+        offline_user_tokens = []
+        offline_users = User.query.filter(User.username.notin_(online_users)).all()
+
         message = History(username=online_users[request.sid],message=data[1],time=data[2])
         db.session.add(message)
         db.session.commit()
+
         last_message_id = History.query.order_by(History.id.desc()).first().id
         js = {"id": last_message_id,"message":data[1],"color":'black',"username":online_users[request.sid],"time":data[2]}
         send_json = json.dumps(js)
         print(send_json)
-        send(send_json,broadcast=True,include_self=False)
+        
         if offline_users is not None:
             for user in offline_users:
                 if user.username != online_users[request.sid]:
-                    send_push_message(user.uniqueId,online_users[request.sid],data[1])
+                    offline_user_tokens.append(user.uniqueId)
+                    
+        send(send_json,broadcast=True,include_self=False)
+        send_push_message(user.uniqueId,online_users[request.sid],data[1])
 
 @socketio.on('connect')
 def connect():
     print('Connected',request.sid)
     emit('status',1)
-
 
 @socketio.on('newUser')
 def newUser(values):
@@ -79,6 +85,7 @@ def send_push_message(token,title, message, extra=None):
         response = PushClient().publish(
             PushMessage(to=token,
                         title=title,
+                        sound='default',
                         body=message,
                         data=extra))
     except PushServerError as exc:
