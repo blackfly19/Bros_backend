@@ -34,7 +34,7 @@ def handleMessage(data):
                     offline_user_tokens.append(user.uniqueId)
                     
         send(send_json,broadcast=True,include_self=False)
-        send_push_message(user.uniqueId,online_users[request.sid],data[1])
+        send_push_message(offline_user_tokens,online_users[request.sid],data[1])
 
 @socketio.on('connect')
 def connect():
