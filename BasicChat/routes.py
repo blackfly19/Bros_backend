@@ -59,7 +59,7 @@ def existingUser(Id):
 def unread_messages(last_row_id):
     print("Hi")
     total_num = History.query.count()
-    data = History.query.order_by(History.id.desc()).limit(total_num)
+    data = History.query.order_by(History.id.desc()).limit(total_num - last_row_id)
     data = data[::-1]
     messages_schema = MessageSchema(many=True)
     messages = messages_schema.dump(data)
