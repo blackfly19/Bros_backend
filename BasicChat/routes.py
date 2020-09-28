@@ -13,21 +13,23 @@ online_usernames = []
 @socketio.on('message')
 def handleMessage(data):
 
-        print('Message: ' + data[0] + ' '+data[1] + ' '+data[2])
+        print('Message: ' + data[0] + ' '+data[1] + ' '+data[2]+' '+data[3])
         offline_users = User.query.filter(User.username.notin_(online_users)).all()
         js = {}
-        message = History(username=online_users[request.sid],message=data[1],time=data[2])
+        message = History(username=online_users[request.sid],message=data[2],time=data[3])
         db.session.add(message)
         db.session.commit()
-        last_message_id = History.query.order_by(History.id.desc()).first().id
-        js = {"id": last_message_id,"message":data[1],"color":'black',"username":online_users[request.sid],"time":data[2]}
+        #last_message_id = History.query.order_by(History.id.desc()).first().id
+        #js = {"id": last_message_id,"message":data[1],"color":'black',"username":online_users[request.sid],"time":data[2]}
+        js = {"message":data[2],"username":online_users[request.sid],"time":data[3]}
         send_json = json.dumps(js)
         print(send_json)
+        emit('receipt',data[0])
         send(send_json,broadcast=True,include_self=False)
         if offline_users is not None:
             for user in offline_users:
                 if user.username != online_users[request.sid]:
-                    send_push_message(user.uniqueId,online_users[request.sid],data[1])
+                    send_push_message(user.uniqueId,online_users[request.sid],data[2])
 
 @socketio.on('connect')
 def connect():
