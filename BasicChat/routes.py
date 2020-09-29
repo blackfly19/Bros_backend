@@ -38,6 +38,7 @@ def connect():
 
 @socketio.on('typing')
 def typing(name):
+    print(name + " is typing...")
     emit('typing',name,broadcast=True,include_self=False)
 
 @socketio.on('newUser')
