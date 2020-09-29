@@ -36,6 +36,9 @@ def connect():
     print('Connected',request.sid)
     emit('status',1)
 
+@socketio.on('typing')
+def typing(name):
+    emit('typing',name,broadcast=True,include_self=False)
 
 @socketio.on('newUser')
 def newUser(values):
