@@ -15,6 +15,7 @@ def handleMessage(data):
 
         print('Message: ' + str(data[0]) + ' '+data[1] + ' '+data[2]+' '+data[3])
         offline_users = User.query.filter(User.username.notin_(online_users)).all()
+        print(offline_users)
         js = {}
         message = History(username=online_users[request.sid],message=data[2],time=data[3])
         db.session.add(message)
