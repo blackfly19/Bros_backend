@@ -13,7 +13,7 @@ online_usernames = []
 @socketio.on('message')
 def handleMessage(data):
 
-        print('Message: ' + str(data[0]) + ' '+data[1] + ' '+data[2]+' '+data[3])
+        #print('Message: ' + str(data[0]) + ' '+data[1] + ' '+data[2]+' '+data[3])
         offline_users = User.query.filter(User.username.notin_(online_users)).all()
         print(offline_users)
         js = {}
