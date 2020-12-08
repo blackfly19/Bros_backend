@@ -88,6 +88,7 @@ def send_push_message(token,title, message, extra=None):
         response = PushClient().publish(
             PushMessage(to=token,
                         title=title,
+                        priority='high',
                         sound='default',
                         body=message,
                         data=extra))
